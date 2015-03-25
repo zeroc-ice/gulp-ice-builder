@@ -1,6 +1,6 @@
 // **********************************************************************
 //
-// Copyright (c) 2003-2014 ZeroC, Inc. All rights reserved.
+// Copyright (c) 2003-2015 ZeroC, Inc. All rights reserved.
 //
 // This copy of Ice is licensed to you under the terms described in the
 // ICE_LICENSE file included in this distribution.
@@ -92,6 +92,15 @@ function isBuildRequired(inputFile, outputFile, dependFile)
 
 function compile(slice2js, file, args, cb)
 {
+    //
+    // Let non Slice files pass-through
+    //
+    if(path.extname(file.path) != ".ice")
+    {
+        cb(null, file);
+        return;
+    }
+
     var p  = slice2js(args.concat(defaultCompileArgs).concat([file.path]));
 
     var buffer = new Buffer(0);
@@ -120,7 +129,7 @@ function compile(slice2js, file, args, cb)
         });
 }
 
-module.exports = function(options)
+module.exports.compile = function(options)
 {
     var opts = options || {};
     var slice2js;
@@ -130,7 +139,7 @@ module.exports = function(options)
     {
         try
         {
-            slice2js = require("zeroc-slice2js");
+            slice2js = require("zeroc-slice2js").compile;
         }
         catch(e)
         {
@@ -200,3 +209,14 @@ module.exports = function(options)
             }
         });
 };
+
+module.exports.sliceDir = (function() {
+    try
+    {
+        return require('zeroc-slice2js').sliceDir;
+    }
+    catch(e)
+    {
+        return null;
+    }
+})();
