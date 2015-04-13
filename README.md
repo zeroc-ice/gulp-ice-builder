@@ -1,14 +1,19 @@
-# gulp-zeroc-ice-builder
-Gulp plugin to compile Slice files to JavaScript.
+# gulp-ice-builder
+[Gulp](https://github.com/gulpjs/gulp) plugin to compile Slice files to JavaScript.
 
 ## Install
 ```bash
-$ npm install gulp-zeroc-ice-builder --save-dev
+$ npm install gulp-ice-builder --save-dev
+```
+
+If you not want to specify your own slice2js compiler or would just like to use the latest, install [slice2js](https://github.com/zeroc-ice/npm-slice2js).
+```bash
+$ npm install slice2js --save-dev
 ```
 
 ## Usage
 ```js
-var iceBuilder = require('gulp-zeroc-ice-builder');
+var iceBuilder = require('gulp-ice-builder');
 
 gulp.task('compile', function() {
     gulp.src('slice/*.ice')
@@ -19,9 +24,9 @@ gulp.task('compile', function() {
 
 ## Options
 
-### exe `String` 
+### exe `String`
 
-The path to the slice2js executable. By default the npm package [zeroc-slice2js](https://github.com/ZeroC-Inc/zeroc-slice2js) will be used.
+The path to the slice2js executable. By default the npm package [slice2js](https://github.com/zeroc-ice/npm-slice2js) will be used (This needs to be installed independently of `gulp-ice-builder`).
 
 ```js
 slice2js({exe: "/opt/Ice-3.6/slice2js"})
@@ -35,7 +40,7 @@ The list of arguments passed to slice2js.
 slice2js({args: ["-I/opt/Ice-3.6/slice"]})
 ```
 
-For a full list of arguments you can pass to the slice2js compiler refer to the [zeroc-slice2js package](https://github.com/ZeroC-Inc/zeroc-slice2js).
+For a full list of arguments you can pass to the slice2js compiler refer to the [slice2js package](https://github.com/zeroc-ice/npm-slice2js).
 
 ### dest `String`
 
