@@ -7,6 +7,7 @@
 var gutil = require("gulp-util");
 var PluginError = gutil.PluginError;
 var PLUGIN_NAME = "gulp-slice2js";
+var SLICE2JS_PACKAGE_NAME = "slice2js";
 
 var through = require("through2");
 var spawn = require("child_process").spawn;
@@ -136,7 +137,7 @@ module.exports.compile = function(options)
     {
         try
         {
-            slice2js = require("slice2js").compile;
+            slice2js = require(SLICE2JS_PACKAGE_NAME).compile;
         }
         catch(e)
         {
@@ -210,7 +211,7 @@ module.exports.compile = function(options)
 module.exports.sliceDir = (function() {
     try
     {
-        return require('zeroc-slice2js').sliceDir;
+        return require(SLICE2JS_PACKAGE_NAME).sliceDir;
     }
     catch(e)
     {
