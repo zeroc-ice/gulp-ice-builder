@@ -136,7 +136,7 @@ module.exports.compile = function(options)
     {
         try
         {
-            slice2js = require("zeroc-slice2js").compile;
+            slice2js = require("slice2js").compile;
         }
         catch(e)
         {
