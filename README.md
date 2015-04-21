@@ -1,12 +1,13 @@
-# gulp-ice-builder
-[Gulp](https://github.com/gulpjs/gulp) plugin to compile Slice files to JavaScript.
+# Ice Builder for Gulp
+[Gulp](https://github.com/gulpjs/gulp) plugin to automate the compilation of Slice files to JavaScript.
 
 ## Install
 ```bash
 $ npm install gulp-ice-builder --save-dev
 ```
 
-If you not want to specify your own slice2js compiler or would just like to use the latest, install [slice2js](https://github.com/zeroc-ice/npm-slice2js).
+`gulp-ice-builder` calls the `slice2js` compiler. You can install the latest [slice2js](https://github.com/zeroc-ice/npm-slice2js) with:
+
 ```bash
 $ npm install slice2js --save-dev
 ```
@@ -15,38 +16,43 @@ $ npm install slice2js --save-dev
 ```js
 var iceBuilder = require('gulp-ice-builder');
 
+// Output directory
+var genDir = 'generated';
+
 gulp.task('compile', function() {
     gulp.src('slice/*.ice')
-        .pipe(iceBuilder.compile())
-        .pipe(gulp.dest(dest));
+        .pipe(iceBuilder.compile({dest:genDir}))
+        .pipe(gulp.dest(genDir));
 });
 ```
 
 ## Options
 
-### exe `String`
-
-The path to the slice2js executable. By default the npm package [slice2js](https://github.com/zeroc-ice/npm-slice2js) will be used (This needs to be installed independently of `gulp-ice-builder`).
-
-```js
-slice2js({exe: "/opt/Ice-3.6/slice2js"})
-```
-
 ### args `Array`
 
-The list of arguments passed to slice2js.
+The list of arguments passed to the `slice2js` compiler.
 
 ```js
-slice2js({args: ["-I/opt/Ice-3.6/slice"]})
+iceBuilder.compile({args: ["-Isrc/slice", "-DDEBUG"]})
 ```
 
-For a full list of arguments you can pass to the slice2js compiler refer to the [slice2js package](https://github.com/zeroc-ice/npm-slice2js).
+For a full list of arguments you can pass to the `slice2js` compiler refer to [slice2js](https://github.com/zeroc-ice/npm-slice2js).
 
 ### dest `String`
 
-The destination directory for your compiled .js files, the same one you use for ``gulp.dest()``. If specified, the dependencies are computed and files will only be recompiled and passed down the gulp stream if changes have been made.
+The destination directory for your generated `.js` files.
 
 ```js
-slice2js({dest: "js/generated"})
+iceBuilder.compile({dest: "js/generated"})
+```
+Specify this directory to avoid unnecessary recompilation of your `Slice` files. This directory must be the same as the directory used with `gulp.dest()`.
+
+### exe `String`
+
+The path to the `slice2js` executable.
+
+```js
+iceBuilder.compile({exe: "/opt/zeroc-ice/bin/slice2js"})
 ```
 
+If not set, the builder will search first for the npm package [slice2js](https://github.com/zeroc-ice/npm-slice2js), and then for `slice2js` in your `PATH`.
