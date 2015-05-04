@@ -1,5 +1,5 @@
 # Ice Builder for Gulp
-[Gulp](https://github.com/gulpjs/gulp) plugin to automate the compilation of Slice files to JavaScript.
+[Gulp](https://github.com/gulpjs/gulp) plug-in to automate the compilation of Slice files to JavaScript.
 
 ## Install
 ```bash
