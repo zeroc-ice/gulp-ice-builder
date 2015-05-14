@@ -6,7 +6,7 @@
 
 var gutil = require("gulp-util");
 var PluginError = gutil.PluginError;
-var PLUGIN_NAME = "gulp-slice2js";
+var PLUGIN_NAME = "gulp-ice-builder";
 var SLICE2JS_PACKAGE_NAME = "slice2js";
 
 var through = require("through2");
