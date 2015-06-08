@@ -82,7 +82,7 @@ function isBuildRequired(inputFile, outputFile, dependFile)
     {
         if(path.normalize(key) == path.normalize(inputFile))
         {
-            return depend[key].some(isnewerthan);
+            return !depend[key].every(isfile) || depend[key].some(isnewerthan);
         }
     }
     return false;
