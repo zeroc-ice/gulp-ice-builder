@@ -45,7 +45,7 @@ The destination directory for your generated `.js` files.
 ```js
 iceBuilder.compile({dest: "js/generated"})
 ```
-Specify this directory to avoid unnecessary recompilation of your `Slice` files. This directory must be the same as the directory used with `gulp.dest()`.
+When this option is set, dependencies will be compunted and saved in .depend subdir, this avoid unnecessary recompilation of your `Slice` files. This directory must be the same as the directory used with `gulp.dest()`.
 
 ### exe `String`
 
