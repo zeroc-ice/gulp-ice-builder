@@ -4,15 +4,16 @@
 //
 // **********************************************************************
 
-var gutil = require("gulp-util");
+var fs       = require("fs");
+var gutil    = require("gulp-util");
+var path     = require("path");
+var platform = require('os').platform();
+var spawn    = require("child_process").spawn;
+var through  = require("through2");
+
 var PluginError = gutil.PluginError;
 var PLUGIN_NAME = "gulp-ice-builder";
 var SLICE2JS_PACKAGE_NAME = "slice2js";
-
-var through = require("through2");
-var spawn = require("child_process").spawn;
-var fs = require("fs");
-var path = require("path");
 
 function rmfile(path)
 {
@@ -65,7 +66,7 @@ function isnewer(input, output)
     return fs.statSync(input).mtime.getTime() > fs.statSync(output).mtime.getTime();
 }
 
-function isBuildRequired(inputFile, outputFile, dependFile)
+function isBuildRequired(inputFile, outputFile, dependFile, slice2js, args)
 {
     if(![inputFile, outputFile, dependFile].every(isfile) || isnewer(inputFile, outputFile))
     {
@@ -78,11 +79,33 @@ function isBuildRequired(inputFile, outputFile, dependFile)
     }
 
     var depend = JSON.parse(fs.readFileSync(dependFile, {encoding: "utf8"}));
-    for(var key in depend)
+
+    // Verify that each property is in the depend object. Otherwise we've encountered an old depend file
+    if(!['args', 'slicejs', 'dependencies' ].every(function(property) { return property in depend; }))
+    {
+        return true;
+    }
+
+    // Check for same number of arguments, old and current slice compiler paths are the same, and that the current
+    // slice compiler is not newer than the output file
+    if(depend.args.length !== args.length || depend.slice2js !== slice2js || isnewerthan(slice2js))
+    {
+        return true;
+    }
+
+    // Check each argument in args is in the depend arg list
+    if(!args.every(function(arg) { return depend.args.indexOf(arg) > -1; }))
+    {
+        return true;
+    }
+
+    // Check dependencies
+    var dependencies = depend.dependencies;
+    for(var key in dependencies)
     {
         if(path.normalize(key) == path.normalize(inputFile))
         {
-            return !depend[key].every(isfile) || depend[key].some(isnewerthan);
+            return !dependencies[key].every(isfile) || dependencies[key].some(isnewerthan);
         }
     }
     return false;
@@ -129,14 +152,24 @@ function compile(slice2js, file, args, cb)
 
 module.exports.compile = function(options)
 {
+    var slice2js, slice2jsPath;
     var opts = options || {};
-    var slice2js;
     var args = opts.args || [];
 
     if(!opts.exe)
     {
         try
         {
+            // First check if the slice2js package contains the slice2js executable path
+            // If it doesn't then we guess the path based on its location inside the package
+            slice2jsPath = require(SLICE2JS_PACKAGE_NAME).slice2js;
+            if(slice2jsPath === undefined)
+            {
+                slice2jsPath = path.join(path.dirname(require.resolve(SLICE2JS_PACKAGE_NAME)),
+                                         'build',
+                                         'Release',
+                                         (platform === 'win32' ? 'slice2js.exe' : 'slice2js'));
+            }
             slice2js = require(SLICE2JS_PACKAGE_NAME).compile;
         }
         catch(e)
@@ -146,10 +179,11 @@ module.exports.compile = function(options)
 
     if(!slice2js)
     {
+        slice2jsPath = path.resolve(opts.exe || "slice2js");
         slice2js = function(args)
-            {
-                return spawn(opts.exe || "slice2js", args);
-            };
+        {
+            return spawn(slice2jsPath, args);
+        };
     }
 
     return through.obj(function(file, enc, cb)
@@ -167,7 +201,7 @@ module.exports.compile = function(options)
                 var outputFile = path.join(file.cwd, opts.dest, path.basename(file.path, ".ice") + ".js");
                 var dependFile = path.join(path.dirname(outputFile), ".depend", path.basename(outputFile, ".js") + ".d");
 
-                if(isBuildRequired(file.path, outputFile, dependFile))
+                if(isBuildRequired(file.path, outputFile, dependFile, slice2jsPath, args))
                 {
                     [outputFile, dependFile].forEach(rmfile);
                     var build  = slice2js(args.concat(defaultDependArgs).concat([file.path]));
@@ -187,7 +221,16 @@ module.exports.compile = function(options)
                         {
                             if(code === 0)
                             {
-                                fs.writeFileSync(dependFile, buffer);
+                                // Write the depends to the dependFile.
+                                // This includes the slice compiler path, the arguments,
+                                // and the slice dependencies
+                                var obj =
+                                {
+                                    slice2js: slice2jsPath,
+                                    args: args,
+                                    dependencies: JSON.parse(buffer)
+                                };
+                                fs.writeFileSync(dependFile, JSON.stringify(obj, null, 4), {encoding: 'utf-8'});
                                 compile(slice2js, file, args, cb);
                             }
                             else
