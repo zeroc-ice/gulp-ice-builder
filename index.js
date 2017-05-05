@@ -55,7 +55,6 @@ function isfile(path)
         }
         throw e;
     }
-    return false;
 }
 
 var defaultCompileArgs = ["--stdout"];
@@ -81,7 +80,7 @@ function isBuildRequired(inputFile, outputFile, dependFile, slice2js, args)
     var depend = JSON.parse(fs.readFileSync(dependFile, {encoding: "utf8"}));
 
     // Verify that each property is in the depend object. Otherwise we've encountered an old depend file
-    if(!['args', 'slicejs', 'dependencies' ].every(function(property) { return property in depend; }))
+    if(!['args', 'slice2js', 'dependencies' ].every(function(property) { return property in depend; }))
     {
         return true;
     }
