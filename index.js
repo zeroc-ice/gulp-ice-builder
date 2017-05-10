@@ -26,18 +26,40 @@ function rmfile(path)
     }
 }
 
-function mkdir(path)
+function mkdir(p)
 {
+    var parent = path.dirname(p);
+    if(!isdir(parent))
+    {
+        mkdir(parent);
+    }
+
     try
     {
-        fs.mkdirSync(path);
+        fs.mkdirSync(p);
     }
     catch(e)
     {
-        if(e.code != "EEXIST")
+        if(e.code != "EEXIST" || isfile(p))
         {
             throw e;
         }
+    }
+}
+
+function isdir(p)
+{
+    try
+    {
+        return fs.statSync(p).isDirectory();
+    }
+    catch(e)
+    {
+        if(e.code == "ENOENT")
+        {
+            return false;
+        }
+        throw e;
     }
 }
 
