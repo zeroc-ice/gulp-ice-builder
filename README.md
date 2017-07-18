@@ -3,13 +3,13 @@
 
 ## Install
 ```bash
-$ npm install gulp-ice-builder --save-dev
+npm install gulp-ice-builder
 ```
 
 `gulp-ice-builder` calls the `slice2js` compiler. You can install the latest [slice2js](https://github.com/zeroc-ice/npm-slice2js) with:
 
 ```bash
-$ npm install slice2js --save-dev
+npm install slice2js
 ```
 
 ## Usage
@@ -45,7 +45,8 @@ The destination directory for your generated `.js` files.
 ```js
 iceBuilder.compile({dest: "js/generated"})
 ```
-When this option is set, dependencies will be compunted and saved in .depend subdir, this avoid unnecessary recompilation of your `Slice` files. This directory must be the same as the directory used with `gulp.dest()`.
+When this option is set, dependencies will be computed and saved in a `.depend` sub-directory. This avoids unnecessary 
+recompilation of your `Slice` files. This directory must be the same as the directory used for `gulp.dest()`.
 
 ### exe `String`
 
