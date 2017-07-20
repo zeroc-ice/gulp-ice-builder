@@ -45,7 +45,7 @@ The destination directory for your generated `.js` files.
 ```js
 iceBuilder.compile({dest: "js/generated"})
 ```
-When this option is set, dependencies will be computed and saved in a `.depend` sub-directory. This avoids unnecessary 
+When this option is set, dependencies will be computed and saved in a `.depend` sub-directory. This avoids unnecessary
 recompilation of your `Slice` files. This directory must be the same as the directory used for `gulp.dest()`.
 
 ### exe `String`
