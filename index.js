@@ -200,10 +200,9 @@ module.exports.compile = function(options)
 
     if(!slice2js)
     {
-        slice2jsPath = path.resolve(opts.exe || "slice2js");
         slice2js = function(args)
         {
-            return spawn(slice2jsPath, args);
+            return spawn(opts.exe || "slice2js", args);
         };
     }
 
