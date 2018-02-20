@@ -171,6 +171,11 @@ function compile(slice2js, file, args, cb)
         });
 }
 
+function version(slice2js)
+{
+    return require('child_process').spawnSync(slice2js, ["-v"], {stdio : 'pipe'}).output[2].toString().trim();
+}
+
 module.exports.compile = function(options)
 {
     var opts = options || {};
@@ -178,11 +183,50 @@ module.exports.compile = function(options)
     var exe = (platform === 'win32' ? 'slice2js.exe' : 'slice2js');
     var iceHome = opts.iceHome;
     var iceToolsPath = opts.iceToolsPath;
-    var includeDirectories = opts.includeDirectories || [];
-    var args = opts.additionalOptions || [];
+    var include = opts.include || [];
+    var args = opts.args || [];
 
-    args = args.concat(includeDirectories.map(function(d){ return "-I" + d; }));
-    if(!iceToolsPath)
+    args = args.concat(include.map(function(d){ return "-I" + d; }));
+
+    if(iceHome)
+    {
+        if(!iceToolsPath)
+        {
+            if(isdir(path.resolve(iceHome, "cpp", "bin")))
+            {
+                iceToolsPath = path.resolve(iceHome, "cpp", "bin")
+            }
+            else
+            {
+                iceToolsPath = path.resolve(iceHome, "bin")
+            }
+        }
+
+        if(!isfile(path.resolve(iceToolsPath, exe)))
+        {
+            throw new PluginError(PLUGIN_NAME,
+                                 "Ice Installation invalid or not detected. Unable to locate slice2js compiler in `" + iceToolsPath + "'");
+        }
+
+        var slicedir = [path.resolve(iceHome, "slice"),
+                        path.resolve(iceHome, "share", "Ice-" + version(path.resolve(iceToolsPath, exe)), "slice"),
+                        path.resolve(iceHome, "share", "slice"),
+                        path.resolve(iceHome, "share", "ice", "slice")].find(function(d){ return isdir(d); });
+
+        if(!slicedir)
+        {
+            throw new PluginError(PLUGIN_NAME,
+                                  "Ice Installation invalid or not detected. Unable to locate Slice directory in `" + iceHome + "'");
+        }
+
+        args.push("-I" + slicedir)
+
+        slice2js = function(args)
+        {
+            return spawn(path.resolve(iceToolsPath, exe), args);
+        };
+    }
+    else // Using npm slice2js package
     {
         try
         {
@@ -203,24 +247,6 @@ module.exports.compile = function(options)
             throw new PluginError(PLUGIN_NAME, "Unable to load slice2js package");
         }
     }
-    else
-    {
-        if(!isfile(path.resolve(iceToolsPath, exe)))
-        {
-            throw new PluginError(PLUGIN_NAME, "Unable to find slice2js in `" + iceToolsPath +"'");
-        }
-        var slicedir = [path.resolve(iceHome, "slice"),
-                            path.resolve(iceHome, "share", "slice"),
-                            path.resolve(iceHome, "share", "ice", "slice")].find(function(d){ return isdir(d); });
-        if(slicedir)
-        {
-            args.push("-I" + slicedir)
-        }
-        slice2js = function(args)
-        {
-            return spawn(path.resolve(iceToolsPath, exe), args);
-        };
-    }
 
     return through.obj(function(file, enc, cb)
         {
@@ -232,9 +258,9 @@ module.exports.compile = function(options)
             {
                 cb(new PluginError(PLUGIN_NAME, "Streaming not supported"));
             }
-            else if(opts.outputDir)
+            else if(opts.dest)
             {
-                var outputFile = path.join(file.cwd, opts.outputDir, path.basename(file.path, ".ice") + ".js");
+                var outputFile = path.join(file.cwd, opts.dest, path.basename(file.path, ".ice") + ".js");
                 var dependFile = path.join(path.dirname(outputFile), ".depend", path.basename(outputFile, ".js") + ".d");
 
                 if(isBuildRequired(file.path, outputFile, dependFile, path.resolve(iceToolsPath, exe), args))
