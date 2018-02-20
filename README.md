@@ -41,15 +41,13 @@ If not set, the builder will try to use the [slice2js](https://github.com/zeroc-
 
 ### iceToolsPath `String`
 
-The directory of `slice2js` executable by default it is set to <iceHome>/bin, you don't need
-to set it when using the [slice2js](https://github.com/zeroc-ice/npm-slice2js) npm package.
+The directory of the `slice2js` executable. This setting is ignored when using the [slice2js](https://github.com/zeroc-ice/npm-slice2js) npm package (`iceHome` not set).
 
 ```js
 iceBuilder.compile({iceHome: "c:\ice", iceToolsPath: "c:\ice\cpp\bin\x64\Release"})
 ```
 
-If not set, the builder will try to use either the [slice2js](https://github.com/zeroc-ice/npm-slice2js) npm package
-or the `slice2js` executable in `iceHome` (when set).
+When not set `<iceHome>/bin` and `<iceHome>/cpp/bin` are searched for the `slice2js` exectuable.
 
 ### dest `String`
 
