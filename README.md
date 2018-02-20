@@ -21,39 +21,62 @@ var genDir = 'generated';
 
 gulp.task('compile', function() {
     gulp.src('slice/*.ice')
-        .pipe(iceBuilder.compile({dest:genDir}))
+        .pipe(iceBuilder.compile({outputDir:genDir}))
         .pipe(gulp.dest(genDir));
 });
 ```
 
 ## Options
 
-### args `Array`
+### iceHome `String`
 
-The list of arguments passed to the `slice2js` compiler.
+The root directory of your Ice installation used for locating the Slice files of your Ice installation, you don't need
+to set it when using the [slice2js](https://github.com/zeroc-ice/npm-slice2js) npm package.
 
 ```js
-iceBuilder.compile({args: ["-Isrc/slice", "-DDEBUG"]})
+iceBuilder.compile({iceHome: "/opt/Ice-3.7.1"})
 ```
 
-For a full list of arguments you can pass to the `slice2js` compiler refer to [slice2js](https://github.com/zeroc-ice/npm-slice2js).
+If not set, the builder will try to use the [slice2js](https://github.com/zeroc-ice/npm-slice2js) npm package.
 
-### dest `String`
+### iceToolsPath `String`
+
+The directory of `slice2js` executable, you don't need
+to set it when using the [slice2js](https://github.com/zeroc-ice/npm-slice2js) npm package.
+
+```js
+iceBuilder.compile({iceToolsPath: "/opt/Ice-3.7.1/bin"})
+```
+
+If not set, the builder will try to use the [slice2js](https://github.com/zeroc-ice/npm-slice2js) npm package.
+
+### outputDir `String`
 
 The destination directory for your generated `.js` files.
 
 ```js
-iceBuilder.compile({dest: "js/generated"})
+iceBuilder.compile({outputDir: "js/generated"})
 ```
 When this option is set, dependencies will be computed and saved in a `.depend` sub-directory. This avoids unnecessary
 recompilation of your `Slice` files. This directory must be the same as the directory used for `gulp.dest()`.
 
-### exe `String`
+### includeDirectories `Array`
 
-The path to the `slice2js` executable.
+List of directories to add to Slice compiler include file search path.
 
 ```js
-iceBuilder.compile({exe: "/opt/zeroc-ice/bin/slice2js"})
+iceBuilder.compile({includeDirectories: ["."]})
 ```
 
-If not set, the builder will search first for the npm package [slice2js](https://github.com/zeroc-ice/npm-slice2js), and then for `slice2js` in your `PATH`.
+Ice Builder invokes `slice2js` with `-I` for all the directories specified by `includeDirectories`, followed by
+`-I$(IceHome)/slice`. As a result, you never need to include `$(IceHome)/slice` in this list.
+
+### additionalOptions `Array`
+
+The list of extra arguments passed to the `slice2js` compiler.
+
+```js
+iceBuilder.compile({additionalOptions: ["-DDEBUG"]})
+```
+
+For a full list of arguments you can pass to the `slice2js` compiler refer to [slice2js](https://github.com/zeroc-ice/npm-slice2js).
