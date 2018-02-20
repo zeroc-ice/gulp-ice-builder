@@ -21,7 +21,7 @@ var genDir = 'generated';
 
 gulp.task('compile', function() {
     gulp.src('slice/*.ice')
-        .pipe(iceBuilder.compile({outputDir:genDir}))
+        .pipe(iceBuilder.compile({dest:genDir}))
         .pipe(gulp.dest(genDir));
 });
 ```
