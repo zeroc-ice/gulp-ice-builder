@@ -48,7 +48,8 @@ to set it when using the [slice2js](https://github.com/zeroc-ice/npm-slice2js) n
 iceBuilder.compile({iceHome: "c:\ice", iceToolsPath: "c:\ice\cpp\bin\x64\Release"})
 ```
 
-If not set, the builder will try to use the [slice2js](https://github.com/zeroc-ice/npm-slice2js) npm package.
+If not set, the builder will try to use either the [slice2js](https://github.com/zeroc-ice/npm-slice2js) npm package
+or the `slice2js` executable in `iceHome` (when set).
 
 ### dest `String`
 
