@@ -204,8 +204,7 @@ module.exports.compile = function(options)
 
         if(!isfile(path.resolve(iceToolsPath, exe)))
         {
-            throw new PluginError(PLUGIN_NAME,
-                                 "Ice Installation invalid or not detected. Unable to locate slice2js compiler in `" + iceToolsPath + "'");
+            throw new PluginError(PLUGIN_NAME, "Unable to locate slice2js compiler in `" + iceToolsPath + "'");
         }
 
         var slicedir = [path.resolve(iceHome, "slice"),
@@ -215,8 +214,7 @@ module.exports.compile = function(options)
 
         if(!slicedir)
         {
-            throw new PluginError(PLUGIN_NAME,
-                                  "Ice Installation invalid or not detected. Unable to locate Slice directory in `" + iceHome + "'");
+            throw new PluginError(PLUGIN_NAME, "Unable to locate Slice directory in `" + iceHome + "'");
         }
 
         args.push("-I" + slicedir)

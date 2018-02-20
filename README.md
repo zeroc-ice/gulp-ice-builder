@@ -57,6 +57,7 @@ The destination directory for your generated `.js` files.
 ```js
 iceBuilder.compile({dest: "js/generated"})
 ```
+
 When this option is set, dependencies will be computed and saved in a `.depend` sub-directory. This avoids unnecessary
 recompilation of your `Slice` files. This directory must be the same as the directory used for `gulp.dest()`.
 
@@ -68,15 +69,15 @@ List of directories to add to Slice compiler include file search path.
 iceBuilder.compile({include: ["."]})
 ```
 
-Ice Builder invokes `slice2js` with `-I` for all the directories specified by `include`, followed by
-`-I<IceHome>/slice`. As a result, you never need to include `<IceHome>/slice` in this list.
+Each directory in `include` is passed to `slice2js` as `-I<dir>`. The Ice slice file
+directory is automatically included from either the [slice2js](https://github.com/zeroc-ice/npm-slice2js) npm package or `iceHome` (when set).
 
 ### args `Array`
 
 The list of extra arguments passed to the `slice2js` compiler.
 
 ```js
-iceBuilder.compile({arg: ["-DDEBUG"]})
+iceBuilder.compile({args: ["-DDEBUG"]})
 ```
 
 For a full list of arguments you can pass to the `slice2js` compiler refer to [slice2js](https://github.com/zeroc-ice/npm-slice2js).
