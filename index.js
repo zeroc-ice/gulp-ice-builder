@@ -173,36 +173,52 @@ function compile(slice2js, file, args, cb)
 
 module.exports.compile = function(options)
 {
-    var slice2js, slice2jsPath;
     var opts = options || {};
-    var args = opts.args || [];
+    var slice2js;
+    var exe = (platform === 'win32' ? 'slice2js.exe' : 'slice2js');
+    var iceHome = opts.iceHome;
+    var iceToolsPath = opts.iceToolsPath;
+    var includeDirectories = opts.includeDirectories || [];
+    var args = opts.additionalOptions || [];
 
-    if(!opts.exe)
+    args = args.concat(includeDirectories.map(function(d){ return "-I" + d; }));
+    if(!iceToolsPath)
     {
         try
         {
             // First check if the slice2js package contains the slice2js executable path
             // If it doesn't then we guess the path based on its location inside the package
-            slice2jsPath = require(SLICE2JS_PACKAGE_NAME).slice2js;
-            if(slice2jsPath === undefined)
+            if(require(SLICE2JS_PACKAGE_NAME).slice2js)
             {
-                slice2jsPath = path.join(path.dirname(require.resolve(SLICE2JS_PACKAGE_NAME)),
-                                         'build',
-                                         'Release',
-                                         (platform === 'win32' ? 'slice2js.exe' : 'slice2js'));
+                iceToolsPath = path.dirname(require(SLICE2JS_PACKAGE_NAME).slice2js);
+            }
+            else
+            {
+                iceToolsPath = path.join(path.dirname(require.resolve(SLICE2JS_PACKAGE_NAME)), 'build', 'Release');
             }
             slice2js = require(SLICE2JS_PACKAGE_NAME).compile;
         }
         catch(e)
         {
+            throw new PluginError(PLUGIN_NAME, "Unable to load slice2js package");
         }
     }
-
-    if(!slice2js)
+    else
     {
+        if(!isfile(path.resolve(iceToolsPath, exe)))
+        {
+            throw new PluginError(PLUGIN_NAME, "Unable to find slice2js in `" + iceToolsPath +"'");
+        }
+        var slicedir = [path.resolve(iceHome, "slice"),
+                            path.resolve(iceHome, "share", "slice"),
+                            path.resolve(iceHome, "share", "ice", "slice")].find(function(d){ return isdir(d); });
+        if(slicedir)
+        {
+            args.push("-I" + slicedir)
+        }
         slice2js = function(args)
         {
-            return spawn(opts.exe || "slice2js", args);
+            return spawn(path.resolve(iceToolsPath, exe), args);
         };
     }
 
@@ -214,14 +230,14 @@ module.exports.compile = function(options)
             }
             else if(file.isStream())
             {
-                cb(new PluginError(PLUGIN_NAME, 'Streaming not supported'));
+                cb(new PluginError(PLUGIN_NAME, "Streaming not supported"));
             }
-            else if(opts.dest)
+            else if(opts.outputDir)
             {
-                var outputFile = path.join(file.cwd, opts.dest, path.basename(file.path, ".ice") + ".js");
+                var outputFile = path.join(file.cwd, opts.outputDir, path.basename(file.path, ".ice") + ".js");
                 var dependFile = path.join(path.dirname(outputFile), ".depend", path.basename(outputFile, ".js") + ".d");
 
-                if(isBuildRequired(file.path, outputFile, dependFile, slice2jsPath, args))
+                if(isBuildRequired(file.path, outputFile, dependFile, path.resolve(iceToolsPath, exe), args))
                 {
                     [outputFile, dependFile].forEach(rmfile);
                     var build  = slice2js(args.concat(defaultDependArgs).concat([file.path]));
@@ -234,7 +250,7 @@ module.exports.compile = function(options)
 
                     build.stderr.on("data", function(data)
                         {
-                            gutil.log("'slice2js error'", data.toString());
+                            gutil.log("slice2js error", data.toString());
                         });
 
                     build.on('close', function(code)
@@ -246,7 +262,7 @@ module.exports.compile = function(options)
                                 // and the slice dependencies
                                 var obj =
                                 {
-                                    slice2js: slice2jsPath,
+                                    slice2js: path.resolve(iceToolsPath, exe),
                                     args: args,
                                     dependencies: JSON.parse(buffer)
                                 };
@@ -270,14 +286,3 @@ module.exports.compile = function(options)
             }
         });
 };
-
-module.exports.sliceDir = (function() {
-    try
-    {
-        return require(SLICE2JS_PACKAGE_NAME).sliceDir;
-    }
-    catch(e)
-    {
-        return null;
-    }
-})();
