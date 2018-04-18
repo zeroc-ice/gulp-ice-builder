@@ -5,13 +5,14 @@
 // **********************************************************************
 
 var fs       = require("fs");
-var gutil    = require("gulp-util");
 var path     = require("path");
 var platform = require('os').platform();
 var spawn    = require("child_process").spawn;
 var through  = require("through2");
 
-var PluginError = gutil.PluginError;
+var PluginError = require('plugin-error');
+var log = require('fancy-log');
+var replaceExt = require('replace-ext');
 var PLUGIN_NAME = "gulp-ice-builder";
 var SLICE2JS_PACKAGE_NAME = "slice2js";
 
@@ -153,14 +154,14 @@ function compile(slice2js, file, args, cb)
 
     p.stderr.on("data", function(data)
         {
-            gutil.log("'slice2js error'", data.toString());
+            log.error("'slice2js error'", data.toString());
         });
 
     p.on('close', function(code)
         {
             if(code === 0)
             {
-                file.path = gutil.replaceExtension(file.path, ".js");
+                file.path = replaceExt(file.path, ".js");
                 file.contents = buffer;
                 cb(null, file);
             }
@@ -274,7 +275,7 @@ module.exports.compile = function(options)
 
                     build.stderr.on("data", function(data)
                         {
-                            gutil.log("slice2js error", data.toString());
+                            log.error("slice2js error", data.toString());
                         });
 
                     build.on('close', function(code)
