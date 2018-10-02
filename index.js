@@ -195,11 +195,11 @@ module.exports.compile = function(options)
         {
             if(isdir(path.resolve(iceHome, "cpp", "bin")))
             {
-                iceToolsPath = path.resolve(iceHome, "cpp", "bin")
+                iceToolsPath = path.resolve(iceHome, "cpp", "bin");
             }
             else
             {
-                iceToolsPath = path.resolve(iceHome, "bin")
+                iceToolsPath = path.resolve(iceHome, "bin");
             }
         }
 
@@ -218,7 +218,7 @@ module.exports.compile = function(options)
             throw new PluginError(PLUGIN_NAME, "Unable to locate Slice directory in `" + iceHome + "'");
         }
 
-        args.push("-I" + slicedir)
+        args.push("-I" + slicedir);
 
         slice2js = function(args)
         {
