@@ -144,6 +144,7 @@ function compile(slice2js, file, args, cb)
         return;
     }
 
+    var typeScript = args.indexOf("--typescript") != -1;
     var p  = slice2js(args.concat(defaultCompileArgs).concat([file.path]));
 
     var buffer = new Buffer(0);
@@ -161,7 +162,7 @@ function compile(slice2js, file, args, cb)
         {
             if(code === 0)
             {
-                file.path = replaceExt(file.path, ".js");
+                file.path = replaceExt(file.path, typeScript ? ".d.ts" : ".js");
                 file.contents = buffer;
                 cb(null, file);
             }
@@ -186,6 +187,7 @@ module.exports.compile = function(options)
     var iceToolsPath = opts.iceToolsPath;
     var include = opts.include || [];
     var args = opts.args || [];
+    var typescript = args.indexOf("--typescript") != -1;
 
     args = args.concat(include.map(function(d){ return "-I" + d; }));
 
@@ -259,8 +261,10 @@ module.exports.compile = function(options)
             }
             else if(opts.dest)
             {
-                var outputFile = path.join(file.cwd, opts.dest, path.basename(file.path, ".ice") + ".js");
-                var dependFile = path.join(path.dirname(outputFile), ".depend", path.basename(outputFile, ".js") + ".d");
+                var outputFile =
+                    path.join(file.cwd, opts.dest, path.basename(file.path, ".ice") + (typescript ? ".d.ts" : ".js"));
+                var dependFile =
+                    path.join(path.dirname(outputFile), ".depend", path.basename(file.path, ".ice") + ".d");
 
                 if(isBuildRequired(file.path, outputFile, dependFile, path.resolve(iceToolsPath, exe), args))
                 {
