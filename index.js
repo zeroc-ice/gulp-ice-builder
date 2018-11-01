@@ -261,8 +261,9 @@ module.exports.compile = function(options)
             }
             else if(opts.dest)
             {
+                var dest = path.isAbsolute(opts.dest) ? opts.dest : path.join(file.cwd, opts.dest);
                 var outputFile =
-                    path.join(file.cwd, opts.dest, path.basename(file.path, ".ice") + (typescript ? ".d.ts" : ".js"));
+                    path.join(dest, path.basename(file.path, ".ice") + (typescript ? ".d.ts" : ".js"));
                 var dependFile =
                     path.join(path.dirname(outputFile), ".depend", path.basename(file.path, ".ice") + ".d");
 
