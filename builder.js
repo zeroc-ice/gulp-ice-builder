@@ -4,14 +4,8 @@
 //
 // **********************************************************************
 
-const PLUGIN_NAME = require("./util").PLUGIN_NAME;
-
 const PluginError = require('plugin-error');
 const SLICE2JS_PACKAGE_NAME = "slice2js";
-
-const isfile = require("./util").isfile;
-const isdir = require("./util").isdir;
-
 const log = require("fancy-log");
 const os = require("os");
 const path = require("path");
@@ -21,6 +15,10 @@ const spawnSync = require("child_process").spawnSync;
 const through = require("through2");
 const Vinyl = require("vinyl");
 const semver = require("semver");
+
+const PLUGIN_NAME = require("./util").PLUGIN_NAME;
+const isfile = require("./util").isfile;
+const isdir = require("./util").isdir;
 
 function compile(self, slice2js, files, args, cb)
 {
