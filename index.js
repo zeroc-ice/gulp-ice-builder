@@ -19,7 +19,7 @@ module.exports = function(options)
     // by default. These transforamtions can be disabled by setting tsbundle:false
     // and jsbundle:false respectively.
     //
-    const typescript = options.args.includes("--typescript");
+    const typescript = options.args && options.args.includes("--typescript");
     if(typescript && options.tsbundle !== false)
     {
         transforms.push(tsbundle(options));
