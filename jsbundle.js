@@ -97,7 +97,7 @@ function jsbundle(options)
                         data += `\nexport * from "${f}";`;
                     }
 
-                    const input = key == "" ? "index.js" : `${key}.js`;
+                    const input = key == "" ? "generated.js" : `${key}.js`;
 
                     let file = new Vinyl({cwd: "./", path: input});
                     file.contents = Buffer.from(data);

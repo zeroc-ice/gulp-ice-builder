@@ -244,7 +244,7 @@ function tsbundle(args)
                     this.push(new Vinyl(
                         {
                             cwd: "./",
-                            path: key === "" ? "index.d.ts" : `${key}.d.ts`,
+                            path: key === "" ? "generated.d.ts" : `${key}.d.ts`,
                             contents: Buffer.from(result.dest)
                         }));
                 }
