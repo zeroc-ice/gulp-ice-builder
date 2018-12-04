@@ -176,7 +176,7 @@ function builder(options)
     exe = path.resolve(iceToolsPath, exe);
     const v = version(exe);
 
-    if(semver.valid(v) !== null &&  semver.gt(v, "3.7.1"))
+    if(semver.valid(v) !== null && semver.gt(v, "3.7.1"))
     {
         const files = [];
         return through.obj(
