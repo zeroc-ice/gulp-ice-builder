@@ -49,17 +49,6 @@ iceBuilder.compile({iceHome: "c:\ice", iceToolsPath: "c:\ice\cpp\bin\x64\Release
 
 When not set `<iceHome>/bin` and `<iceHome>/cpp/bin` are searched for the `slice2js` exectuable.
 
-### dest `String`
-
-The destination directory for your generated `.js` files.
-
-```js
-iceBuilder.compile({dest: "js/generated"})
-```
-
-When this option is set, dependencies will be computed and saved in a `.depend` sub-directory. This avoids unnecessary
-recompilation of your `Slice` files. This directory must be the same as the directory used for `gulp.dest()`.
-
 ### include `Array`
 
 List of directories to add to Slice compiler include file search path.
@@ -80,3 +69,22 @@ iceBuilder.compile({args: ["-DDEBUG"]})
 ```
 
 For a full list of arguments you can pass to the `slice2js` compiler refer to [slice2js](https://github.com/zeroc-ice/npm-slice2js).
+
+### jsbundle `Boolean`
+
+The creation of JSBundle is enabled by default when `--typescript` argument is used, it can be disabled
+by setting `jsbundle` property to `false`. The creation of JavaScript bundles use [Rollup](1) module bundler
+and it requires that your Slice definitions use the [es6 JavaScript module mapping](2).
+
+### jsbundleFormat `String`
+
+The output format use by Rollup generated bundled, it correspond to Rollup `--format` option. The accepted
+values are `amd`, `cjs`, `es`, `iife` and  `umd`. The default value is `es`.
+
+### jsbundleSourcemap `Boolean`
+
+Enable or disable the generation of sourcemap files for the generated JavaScript bundle. The default is to
+generate a source map for each generated bundled, it can be disabled by setting this option to `false`.
+
+[1]: https://rollupjs.org/guide/en
+[2]: https://doc.zeroc.com/ice/3.7/language-mappings/javascript-mapping/client-side-slice-to-javascript-mapping/javascript-mapping-for-modules#id-.JavaScriptMappingforModulesv3.7-AlternateMappingforModules

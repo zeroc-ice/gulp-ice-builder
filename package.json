@@ -1,6 +1,6 @@
 {
   "name": "gulp-ice-builder",
-  "version": "2.0.3",
+  "version": "3.0.0",
   "description": "Gulp plugin to compile Slice files to JavaScript",
   "main": "index.js",
   "author": "Zeroc, Inc.",
@@ -17,6 +17,14 @@
     "fancy-log": "^1.3.2",
     "plugin-error": "^1.0.1",
     "replace-ext": "^1.0.0",
-    "through2": "^2.0.3"
+    "rollup": "^0.67.3",
+    "stream-combiner": "^0.2.2",
+    "through2": "^2.0.3",
+    "typescript": "^3.2.1",
+    "typescript-formatter": "^7.2.2",
+    "vinyl": "^2.2.0"
+  },
+  "devDependencies": {
+    "semver": "^5.6.0"
   }
 }
