@@ -3,14 +3,17 @@ node_js:
   - "10"
 
 matrix:
-    - env: SLICE2JS_VERSION=3.6.4
-    - env: SLICE2JS_VERSION=3.7.1
+  include:
+  - name: "Test with Ice 3.6.4"
+    env: SLICE2JS_VERSION=3.6.4
+  - name: "Test With Ice 3.7.1"
+    env: SLICE2JS_VERSION=3.7.1
 
 install:
-    - npm install slice2js@$SLICE2JS_VERSION
+  - npm install slice2js@$SLICE2JS_VERSION
 
 script:
-    - npx mocha tests/test.js
+  - npx mocha tests/test.js
 
 notifications:
   slack:
