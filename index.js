@@ -11,7 +11,7 @@ const tsbundle = require("./tsbundle");
 const jsbundle = require("./jsbundle");
 const jsfilter = require("./jsfilter");
 
-module.exports = function(options)
+module.exports = function(options = {})
 {
     const transforms = [builder(options)];
     //
