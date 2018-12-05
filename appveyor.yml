@@ -14,18 +14,19 @@ clone_folder: c:\projects\gulp-ice-builder
 # NodeJS versions to test
 environment:
   matrix:
-      - slice2js_version: "3.6.4"
-        nodejs_version: 10
-        APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+    - slice2js: "slice2js@3.6.4"
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
 
-      - slice2js_version: "3.7.1"
-        nodejs_version: 10
-        APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+    - slice2js_version: "slice2js@3.7.1"
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+
+    - slice2js_version: "zeroc-ice/slice2js#3.7"
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
 
 install:
     - node --version
     - npm --version
-    - npm install slice2js@%slice2js_version%
+    - npm install %slice2js%
 
 build: off
 

@@ -5,12 +5,14 @@ node_js:
 matrix:
   include:
   - name: "Test with Ice 3.6.4"
-    env: SLICE2JS_VERSION=3.6.4
+    env: SLICE2JS=slice2js@3.6.4
   - name: "Test With Ice 3.7.1"
-    env: SLICE2JS_VERSION=3.7.1
+    env: SLICE2JS=slice2js@3.7.1
+  - name: "Test With Ice 3.7 HEAD"
+    env: SLICE2JS=zeroc-ice/slice2js#3.7
 
 install:
-  - npm install slice2js@$SLICE2JS_VERSION
+  - npm install $SLICE2JS
 
 script:
   - npx mocha tests/test.js
