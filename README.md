@@ -1,4 +1,4 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/fh4mgtodjogvrigp/branch/3.x?svg=true)](https://ci.appveyor.com/project/zeroc/npm-slice2js/branch/3.x)
+[![Build status](https://ci.appveyor.com/api/projects/status/0f8x0vf1vwo4omas/branch/3.x?svg=true)](https://ci.appveyor.com/project/zeroc/npm-slice2js/branch/3.x)
 
 # Ice Builder for Gulp
 [Gulp][1] plug-in to automate the compilation of Slice files to JavaScript.
