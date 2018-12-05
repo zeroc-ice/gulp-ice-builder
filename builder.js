@@ -5,20 +5,15 @@
 // **********************************************************************
 
 const PluginError = require('plugin-error');
-const SLICE2JS_PACKAGE_NAME = "slice2js";
+const Vinyl = require("vinyl");
 const log = require("fancy-log");
 const os = require("os");
 const path = require("path");
-const platform = os.platform();
-const spawn = require("child_process").spawn;
-const spawnSync = require("child_process").spawnSync;
-const through = require("through2");
-const Vinyl = require("vinyl");
 const semver = require("semver");
+const {spawn, spawnSync} = require("child_process");
+const through = require("through2");
 
-const PLUGIN_NAME = require("./util").PLUGIN_NAME;
-const isfile = require("./util").isfile;
-const isdir = require("./util").isdir;
+const {PLUGIN_NAME, isfile, isdir} = require("./util");
 
 function compile(self, slice2js, files, args, cb)
 {
@@ -114,7 +109,7 @@ function builder(options)
 {
     const opts = options || {};
     let slice2js;
-    let exe = (platform === 'win32' ? 'slice2js.exe' : 'slice2js');
+    let exe = (os.platform == "win32" ? "slice2js.exe" : "slice2js");
     const iceHome = opts.iceHome;
     let iceToolsPath = opts.iceToolsPath;
     const include = opts.include || [];
@@ -136,7 +131,7 @@ function builder(options)
             }
         }
 
-        if(!isfile(path.resolve(iceToolsPath, exe)))
+        if(!isfile(path.join(iceToolsPath, exe)))
         {
             throw new PluginError(PLUGIN_NAME, "Unable to locate slice2js compiler in `" + iceToolsPath + "'");
         }
@@ -159,6 +154,7 @@ function builder(options)
     {
         try
         {
+            const SLICE2JS_PACKAGE_NAME = "slice2js";
             // First check if the slice2js package contains the slice2js executable path
             // If it doesn't then we guess the path based on its location inside the package
             if(require(SLICE2JS_PACKAGE_NAME).slice2js)
