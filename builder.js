@@ -85,10 +85,14 @@ function compile(self, slice2js, files, args, cb)
 
                 if(generated === null)
                 {
+                    const basename = path.basename(files[0].path, ".ice");
+                    const outputPath = args.some(v => ["--depend", "--depend-xml", "--depend-json"].includes(v)) ?
+                          `${basename}.d` : `${basename}.js`;
+
                     self.push(new Vinyl(
                         {
                             cwd: "./",
-                            path: `${path.basename(files[0].path)}.js`,
+                            path: `${outputPath}`,
                             contents: Buffer.from(data)
                         }));
                 }
