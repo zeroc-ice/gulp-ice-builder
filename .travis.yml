@@ -9,7 +9,7 @@ matrix:
   - name: "Test With Ice 3.7.1"
     env: SLICE2JS=slice2js@3.7.1
   - name: "Test With Ice 3.7 HEAD"
-    env: SLICE2JS=zeroc-ice/slice2js#3.7
+    env: SLICE2JS=zeroc-ice/npm-slice2js#3.7
 
 install:
   - npm install $SLICE2JS
