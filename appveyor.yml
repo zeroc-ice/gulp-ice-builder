@@ -25,7 +25,7 @@ environment:
 install:
     - node --version
     - npm --version
-    - npm install slice2js@$env:slice2js_version
+    - npm install slice2js@{slice2js_version}
 
 build: off
 
