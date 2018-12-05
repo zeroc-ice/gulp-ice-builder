@@ -79,7 +79,7 @@ code for all the Slice compilation units that belong to a given `js:module`, an 
 named `generated.js` is generated containing all the JavaScript generated code for Slice compilation
 units that doesn't belong to any `js:module`.
 
-The `jsbundle` option is enabled by default when `args` contains `--typescript` value, it can
+The `jsbundle` option is enabled by default when `args` contains `--typescript` value. It can
 be manually enabled and disabled by setting this property to `true` or `false` respectively.
 
 The bundle creation uses [Rollup][3] module bundler and it requires that your Slice definitions
@@ -104,7 +104,7 @@ iceBuilder({
 
 ### jsbundleSourcemap `Boolean`
 
-Enable or disable the generation of sourcemap files for the generated JavaScript bundle. The default is to
+Enable or disable the generation of source map files for the generated JavaScript bundle. The default is to
 generate a source map for each generated bundled, it can be disabled by setting this option to `false`.
 
 ```js
@@ -115,9 +115,9 @@ iceBuilder({
 
 ### tsbundle `Boolean`
 
-Create a bundle containing the TypeScript declarations for each `js:module`, an extra
-bundled named `generated.d.ts` is generated containing the TypeScript generated declarations
-for Slice compilation units that doesn't belong to any `js:module`.
+Create a bundle containing the TypeScript declarations for each `js:module`. An extra
+bundle named `generated.d.ts` is generated containing the TypeScript generated declarations
+for Slice compilation units that do not belong to any `js:module`.
 
 ```js
 iceBuilder({
@@ -125,7 +125,7 @@ iceBuilder({
     tsbundle: false});
 ```
 
-The `tsbundle` option is enabled by default when `args` contains `--typescript` value, it can
+The `tsbundle` option is enabled by default when `args` contains `--typescript` value. It can
 be manually enabled and disabled by setting this property to `true` or `false` respectively.
 
 [1]: https://github.com/gulpjs/gulp
