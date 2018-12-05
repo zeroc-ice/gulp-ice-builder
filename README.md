@@ -3,18 +3,18 @@
 
 ## Install
 ```bash
-npm install gulp-ice-builder
+npm install gulp-ice-builder --save-dev
 ```
 
 `gulp-ice-builder` calls the `slice2js` compiler. You can install the latest [slice2js][2] with:
 
 ```bash
-npm install slice2js
+npm install slice2js --save-dev
 ```
 
 ## Usage
 ```js
-var iceBuilder = require('gulp-ice-builder');
+const iceBuilder = require('gulp-ice-builder');
 
 gulp.task("slice2js", () => {
     return gulp.src('slice/*.ice')
@@ -75,12 +75,15 @@ For a full list of arguments you can pass to the `slice2js` compiler refer to [s
 ### jsbundle `Boolean`
 
 Create a JavaScript bundle for each `js:module`, the bundle contains the JavaScript generated
-code for all the Slice compilation units that belong to a given module, an extra bundled named 
-`generated.js` is generated containing all the JavaScript generated code for Slice compilation
+code for all the Slice compilation units that belong to a given `js:module`, an extra bundled
+named `generated.js` is generated containing all the JavaScript generated code for Slice compilation
 units that doesn't belong to any `js:module`.
 
+The `jsbundle` option is enabled by default when `args` contains `--typescript` value, it can
+be manually enabled and disabled by setting this property to `true` or `false` respectively.
+
 The bundle creation uses [Rollup][3] module bundler and it requires that your Slice definitions
-use the [es6 JavaScript module mapping][4].
+use the [es6 JavaScript module mapping][4] introduced with Ice 3.7.
 
 ```js
 iceBuilder({
@@ -121,6 +124,9 @@ iceBuilder({
     args: ["--typescript"],
     tsbundle: false});
 ```
+
+The `tsbundle` option is enabled by default when `args` contains `--typescript` value, it can
+be manually enabled and disabled by setting this property to `true` or `false` respectively.
 
 [1]: https://github.com/gulpjs/gulp
 [2]: https://github.com/zeroc-ice/npm-slice2js
