@@ -131,9 +131,12 @@ function jsbundle(options)
                     file.contents = Buffer.from(code);
                     this.push(file);
 
-                    file = new Vinyl({cwd: "./", path: `${output}.map`});
-                    file.contents = Buffer.from(JSON.stringify(map, null, 4));
-                    this.push(file);
+                    if(sourcemap)
+                    {
+                        file = new Vinyl({cwd: "./", path: `${output}.map`});
+                        file.contents = Buffer.from(JSON.stringify(map, null, 4));
+                        this.push(file);
+                    }
                 }
                 cb();
             }
