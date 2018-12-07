@@ -16,43 +16,6 @@ function jsbundle(options)
 
     const format = options.jsbundleFormat || "es";
     const sourcemap = options.jsbundleSourcemap === undefined ? true : options.jsbundleSourcemap;
-    //
-    // Allow to resolve JavaScript files in the gulp stream
-    //
-    function resolve(inputs)
-    {
-        return {
-            name: "ice-bundle",
-            resolveId: function(id)
-            {
-                let target = path.resolve(id);
-                if(!path.basename(target).endsWith(".js"))
-                {
-                    target += ".js";
-                }
-
-                if(inputs.find(f => path.resolve(f.path) === target))
-                {
-                    return target;
-                }
-                return null;
-            },
-            load: function(id)
-            {
-                let target = path.resolve(id);
-                if(!path.basename(target).endsWith(".js"))
-                {
-                    target += ".js";
-                }
-
-                const file = inputs.find(f => path.resolve(f.path) === target);
-                if(file)
-                {
-                    return file.contents.toString();
-                }
-            }
-        };
-    }
 
     return through.obj(
         function(file, enc, cb)
@@ -94,20 +57,73 @@ function jsbundle(options)
                     let data = "";
                     for(const f of files)
                     {
-                        data += `\nexport * from "${f}";`;
+                        data += `\nexport * from "./${f}";`;
                     }
 
-                    const input = key == "" ? "generated.js" : `${key}.js`;
+                    const minputs = inputs.filter(f1 => files.find(f2 => path.resolve(f1.path) == path.resolve(f2)));
 
+                    const input = key == "" ? "generated.js" : `${key}.js`;
                     let file = new Vinyl({cwd: "./", path: input});
                     file.contents = Buffer.from(data);
-                    inputs.push(file);
+                    minputs.push(file);
+
+                    const globals = {};
+
+                    //
+                    // Allow to resolve JavaScript files in the gulp stream
+                    //
+                    function resolve()
+                    {
+                        return {
+                            name: "ice-bundle",
+                            resolveId: function(id, importer)
+                            {
+                                //
+                                // IDs not resolved in the bundle imputs are considered
+                                // externals returning false from resolveId make rollup
+                                // treat them as externals
+                                //
+                                let target = path.resolve(id);
+                                if(!path.basename(target).endsWith(".js"))
+                                {
+                                    target += ".js";
+                                }
+
+                                if(minputs.find(f => path.resolve(f.path) === target))
+                                {
+                                    return target;
+                                }
+
+                                //
+                                // Add external module imports to the bundle globals.
+                                //
+                                if(!id.startsWith(".") && !id.endsWith(".js"))
+                                {
+                                    globals[id] = id;
+                                }
+                                return false;
+                            },
+                            load: function(id)
+                            {
+                                let target = path.resolve(id);
+                                if(!path.basename(target).endsWith(".js"))
+                                {
+                                    target += ".js";
+                                }
+
+                                const file = minputs.find(f => path.resolve(f.path) === target);
+                                if(file)
+                                {
+                                    return file.contents.toString();
+                                }
+                            }
+                        };
+                    }
 
                     const bundle = await rollup.rollup(
                         {
                             input: input,
-                            external: ["ice"],
-                            plugins: [resolve(inputs)],
+                            plugins: [resolve(minputs)],
                             onwarn: warn => {
                                 if(warn.code == 'NAMESPACE_CONFLICT')
                                 {
@@ -121,9 +137,8 @@ function jsbundle(options)
                         {
                             format: format,
                             sourcemap: sourcemap,
-                            globals: {
-                                ice: "ice"
-                            }
+                            globals: globals,
+                            name: path.basename(input, ".js")
                         });
 
                     const output = input;
