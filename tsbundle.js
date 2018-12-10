@@ -13,7 +13,7 @@ const through = require("through2");
 const Vinyl = require('vinyl');
 const formatter = require('typescript-formatter');
 
-const {PLUGIN_NAME} = require("./util");
+const {PLUGIN_NAME, copyright} = require("./util");
 
 function tsbundle(args)
 {
@@ -217,7 +217,8 @@ function tsbundle(args)
                         }
                     }
 
-                    let output = "";
+                    let output = copyright;
+                    output += "\n";
                     //
                     // Write the bundled imports filtering out imports that correspond
                     // to files in this bundle.

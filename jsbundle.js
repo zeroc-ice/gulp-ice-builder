@@ -10,7 +10,7 @@ const through = require("through2");
 const path = require("path");
 const Vinyl = require('vinyl');
 
-const {PLUGIN_NAME} = require("./util");
+const {PLUGIN_NAME, copyright} = require("./util");
 
 function jsbundle(options)
 {
@@ -150,7 +150,7 @@ function jsbundle(options)
                                    const {code, map} = bundle;
                                    const output = input;
                                    file = new Vinyl({cwd: "./", path: output});
-                                   file.contents = Buffer.from(code);
+                                   file.contents = Buffer.from(`${copyright}\n${code}`);
                                    this.push(file);
 
                                    if(sourcemap)

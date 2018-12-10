@@ -62,7 +62,17 @@ function isfile(path)
     }
 }
 
+const copyright = `// **********************************************************************
+//
+// Copyright (c) 2003-2018 ZeroC, Inc. All rights reserved.
+//
+// This copy of Ice is licensed to you under the terms described in the
+// ICE_LICENSE file included in this distribution.
+//
+// **********************************************************************`;
+
 module.exports.PLUGIN_NAME = PLUGIN_NAME;
 module.exports.mkdir = mkdir;
 module.exports.isdir = isdir;
 module.exports.isfile = isfile;
+module.exports.copyright = copyright;
