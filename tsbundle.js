@@ -4,6 +4,7 @@
 //
 // **********************************************************************
 
+const PluginError = require('plugin-error');
 const fs = require("fs");
 const ts = require("typescript");
 const path = require("path");
@@ -11,6 +12,8 @@ const os = require("os");
 const through = require("through2");
 const Vinyl = require('vinyl');
 const formatter = require('typescript-formatter');
+
+const {PLUGIN_NAME} = require("./util");
 
 function tsbundle(args)
 {
@@ -38,7 +41,7 @@ function tsbundle(args)
                 cb();
             }
         },
-        async function(cb)
+        function(cb)
         {
             if(inputs.length == 0)
             {
@@ -50,6 +53,7 @@ function tsbundle(args)
                 // Create a bundle for each js:module and a default bundle for files doesn't
                 // belong to any module
                 //
+                const all = [];
                 const names = modules === undefined ? [""] :
                     modules.map(m => m.module).filter((v, i, a) => a.indexOf(v) == i);
 
@@ -239,16 +243,28 @@ function tsbundle(args)
                         });
                     output += `\n${data}`;
 
-                    const result = await formatter.processString("", output, {});
-
-                    this.push(new Vinyl(
-                        {
-                            cwd: "./",
-                            path: key === "" ? "generated.d.ts" : `${key}.d.ts`,
-                            contents: Buffer.from(result.dest)
-                        }));
+                    const p = formatter.processString("", output, {}).then(
+                        result =>
+                            {
+                                this.push(new Vinyl(
+                                    {
+                                        cwd: "./",
+                                        path: key === "" ? "generated.d.ts" : `${key}.d.ts`,
+                                        contents: Buffer.from(result.dest)
+                                    }));
+                            });
+                    all.push(p);
                 }
-                cb();
+
+                Promise.all(all).then(
+                    () =>
+                        {
+                            cb();
+                        },
+                    err =>
+                        {
+                            cb(new PluginError(PLUGIN_NAME, `error generating TypeScript bundle: ${err}`));
+                        });
             }
         });
 }

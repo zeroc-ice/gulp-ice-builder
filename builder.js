@@ -95,7 +95,7 @@ function compile(self, slice2js, files, args, cb)
             }
             else
             {
-                cb(new PluginError(PLUGIN_NAME, 'slice2js exit with error code: ' + code));
+                cb(new PluginError(PLUGIN_NAME, `slice2js exit with error code: ${code}`));
             }
         });
 }
@@ -133,7 +133,7 @@ function builder(options)
 
         if(!isfile(path.join(iceToolsPath, exe)))
         {
-            throw new PluginError(PLUGIN_NAME, "Unable to locate slice2js compiler in `" + iceToolsPath + "'");
+            throw new PluginError(PLUGIN_NAME, `Unable to locate slice2js compiler in ${iceToolsPath}"`);
         }
 
         const slicedir = [path.resolve(iceHome, "slice"),
@@ -143,7 +143,7 @@ function builder(options)
 
         if(!slicedir)
         {
-            throw new PluginError(PLUGIN_NAME, "Unable to locate Slice directory in `" + iceHome + "'");
+            throw new PluginError(PLUGIN_NAME, `Unable to locate Slice directory in "${iceHome}"`);
         }
 
         args.push(`-I${slicedir}`);

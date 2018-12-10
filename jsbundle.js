@@ -4,10 +4,13 @@
 //
 // **********************************************************************
 
+const PluginError = require('plugin-error');
 const rollup = require("rollup");
 const through = require("through2");
 const path = require("path");
 const Vinyl = require('vinyl');
+
+const {PLUGIN_NAME} = require("./util");
 
 function jsbundle(options)
 {
@@ -38,7 +41,7 @@ function jsbundle(options)
                 cb();
             }
         },
-        async function(cb)
+        function(cb)
         {
             if(inputs.length == 0 || modules === undefined)
             {
@@ -50,6 +53,7 @@ function jsbundle(options)
                 // Create a bundle for each js:module and a default bundle for files doesn't
                 // belong to any module
                 //
+                const all = [];
                 const names = modules.map(m => m.module).filter((v, i, a) => a.indexOf(v) == i);
                 for(const key of names)
                 {
@@ -120,7 +124,7 @@ function jsbundle(options)
                         };
                     }
 
-                    const bundle = await rollup.rollup(
+                    let p = rollup.rollup(
                         {
                             input: input,
                             plugins: [resolve(minputs)],
@@ -133,27 +137,41 @@ function jsbundle(options)
                             }
                         });
 
-                    const {code, map} = await bundle.generate(
+                    p = p.then(bundle => bundle.generate(
                         {
                             format: format,
                             sourcemap: sourcemap,
                             globals: globals,
                             name: path.basename(input, ".js")
-                        });
+                        }));
 
-                    const output = input;
-                    file = new Vinyl({cwd: "./", path: output});
-                    file.contents = Buffer.from(code);
-                    this.push(file);
+                    p = p.then(bundle =>
+                               {
+                                   const {code, map} = bundle;
+                                   const output = input;
+                                   file = new Vinyl({cwd: "./", path: output});
+                                   file.contents = Buffer.from(code);
+                                   this.push(file);
 
-                    if(sourcemap)
-                    {
-                        file = new Vinyl({cwd: "./", path: `${output}.map`});
-                        file.contents = Buffer.from(JSON.stringify(map, null, 4));
-                        this.push(file);
-                    }
+                                   if(sourcemap)
+                                   {
+                                       file = new Vinyl({cwd: "./", path: `${output}.map`});
+                                       file.contents = Buffer.from(JSON.stringify(map, null, 4));
+                                       this.push(file);
+                                   }
+                               });
+                    all.push(p);
                 }
-                cb();
+
+                Promise.all(all).then(
+                    () =>
+                        {
+                            cb();
+                        },
+                    err =>
+                        {
+                            cb(new PluginError(PLUGIN_NAME, `error generating JavaScript bundle: ${err}`));
+                        });
             }
         });
 }
