@@ -147,15 +147,14 @@ function jsbundle(options)
 
                     p = p.then(bundle =>
                                {
-                                   const {code, map} = bundle;
-                                   const output = input;
-                                   file = new Vinyl({cwd: "./", path: output});
+                                   const {code, map} = bundle.output[0];
+                                   file = new Vinyl({cwd: "./", path: input});
                                    file.contents = Buffer.from(`${copyright}\n${code}`);
                                    this.push(file);
 
                                    if(sourcemap)
                                    {
-                                       file = new Vinyl({cwd: "./", path: `${output}.map`});
+                                       file = new Vinyl({cwd: "./", path: `${input}.map`});
                                        file.contents = Buffer.from(JSON.stringify(map, null, 4));
                                        this.push(file);
                                    }
