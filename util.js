@@ -1,8 +1,6 @@
-// **********************************************************************
 //
-// Copyright (c) 2014-present ZeroC, Inc. All rights reserved.
+// Copyright (c) ZeroC, Inc. All rights reserved.
 //
-// **********************************************************************
 
 const fs = require("fs");
 const path = require("path");
@@ -62,11 +60,9 @@ function isfile(path)
     }
 }
 
-const copyright = `// **********************************************************************
-//
-// Copyright (c) 2003-present ZeroC, Inc. All rights reserved.
-//
-// **********************************************************************`;
+const copyright = `//
+// Copyright (c) ZeroC, Inc. All rights reserved.
+//`;
 
 module.exports.PLUGIN_NAME = PLUGIN_NAME;
 module.exports.mkdir = mkdir;
