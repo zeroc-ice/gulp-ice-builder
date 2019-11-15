@@ -114,6 +114,7 @@ function builder(options)
     let args = opts.args || [];
     args = args.concat(include.map(d => `-I${d}`));
     args.push("--stdout");
+    let v;
 
     if(iceHome)
     {
@@ -129,13 +130,15 @@ function builder(options)
             }
         }
 
-        if(!isfile(path.join(iceToolsPath, exe)))
+        exe = path.resolve(iceToolsPath, exe);
+        if(!isfile(path.join(exe)))
         {
             throw new PluginError(PLUGIN_NAME, `Unable to locate slice2js compiler in ${iceToolsPath}"`);
         }
+        v = version(exe);
 
         const slicedir = [path.resolve(iceHome, "slice"),
-                          path.resolve(iceHome, "share", `Ice-${version}`, "slice"),
+                          path.resolve(iceHome, "share", `Ice-${v}`, "slice"),
                           path.resolve(iceHome, "share", "slice"),
                           path.resolve(iceHome, "share", "ice", "slice")].find(d => isdir(d));
 
@@ -169,10 +172,14 @@ function builder(options)
         {
             throw new PluginError(PLUGIN_NAME, "Unable to load slice2js package");
         }
-    }
 
-    exe = path.resolve(iceToolsPath, exe);
-    const v = version(exe);
+        exe = path.resolve(iceToolsPath, exe);
+        if(!isfile(path.join(exe)))
+        {
+            throw new PluginError(PLUGIN_NAME, `Unable to locate slice2js compiler in ${iceToolsPath}"`);
+        }
+        v = version(exe);
+    }
 
     if(semver.valid(v) !== null && semver.gt(v, "3.7.1"))
     {
