@@ -25,7 +25,7 @@
     "vinyl": "^2.2.0"
   },
   "devDependencies": {
-    "mocha": "^7.1.2",
+    "mocha": "^10.2.0",
     "slice2js": "github:zeroc-ice/npm-slice2js#3.7",
     "stream-array": "^1.1.2",
     "stream-assert": "^2.0.3"
